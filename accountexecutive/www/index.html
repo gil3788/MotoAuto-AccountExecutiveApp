@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Account Executive Mapping App</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="css/app.min.css">
+
+  <style>
+    /* TODO */
+
+    @-webkit-keyframes pulse {
+      0% {
+        background-color: #CCC;
+      }
+      25% {
+        background-color: #EEE;
+      }
+      50% {
+        background-color: #CCC;
+      }
+      75% {
+        background-color: #EEE;
+      }
+      100% {
+        background-color: #CCC;
+      }
+    }
+
+    .scroll-page .loading {
+      margin: 12px auto;
+      border: 8px solid #AAA;
+      height: 16px;
+      width: 16px;
+      background: #CCC;
+      border-radius: 16px;
+      -webkit-animation: pulse 2s ease-in-out 0s infinite;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Page 1: Register Client Coordinates -->
+   <div class="app-page" data-page="page-1">
+
+         <div class="app-topbar">
+           <div class="app-title">Map Client Coordinates</div>
+           <div class="right app-button" data-back></div>
+         </div>
+
+         <div class="app-content">
+           <!--<input class="app-input" type="search" placeholder="Search..">-->
+
+           <div class="app-section">
+             <input class="app-input" id="sender-address" placeholder="Vendor Id">
+           </div>
+
+           <div class="app-section">
+             <input class="app-input" id="recipient-address" placeholder="Client Id">
+           </div>
+
+           <form class="app-section">
+
+             <input class="app-input" id="clientname" name="clientname" placeholder="Client Name">
+             <input class="app-input" id="latitude" name="latitude" placeholder="Latitude">
+             <input class="app-input" id="longitude" name="longitude" placeholder="Longitude">
+
+             <div class="app-button green app-submit" id= "send-coordinates">Register</div>
+           </form>
+         </div>
+       </div>
+         <!-- ////////////////////// -->
+      <script src="js/zepto.js"></script>
+      <script src="js/app.min.js"></script>
+      <script>
+
+         App.controller('page-1', function (page) {
+
+           navigator.geolocation.getCurrentPosition ( function (position) {
+
+               var latitude = position.coords.latitude;
+               var longitude = position.coords.longitude;
+               /*
+               document.getElementById('latitude').value = latitude;
+               document.getElementById('longitude').value = longitude;
+               */
+               console.log(latitude);
+               console.log(longitude);
+               //$(page).find('#lat').html(latitude).show();
+               //$(page).find('#lon').html(longitude).show();
+
+              if (latitude && longitude) {
+
+                document.getElementById('latitude').value = latitude;
+                document.getElementById('longitude').value = longitude;
+                console.log(latitude);
+                console.log(longitude);
+              /*
+                $.ajax({
+                  url: "https://maps.googleapis.com/maps/api/js?key=AIzaSyAv20-zjooR4aMBd4td1Z7ZbE1ac5NtMqQ&sensor=true",
+                  dataType: "script",
+                  success: "onMapsApiLoaded"
+                });
+
+
+               function onMapsApiLoaded() {
+                var coordinates = {lat: latitude, lng: longitude};
+                console.log(coordinates);
+                var map = new google.maps.Map(document.getElementById('map_page_1'), {
+                  zoom: 15,
+                  center: coordinates
+                });
+
+                var marker = new google.maps.Marker({
+                  position: coordinates,
+                  map: map
+                });
+                console.log(marker);
+
+              }*/
+              } //end if lat and longitude
+
+           });// end of geo function
+
+           $(page).find('#send-coordinates').clickable().on('click', function () {
+              console.log("Register Button Clicked");
+               //Attempt to Send Email//
+               $.ajax({
+                 type: 'GET',
+                 //url: 'http://79.170.40.244/gilaguilar-hostingdemo-v1.com/mobile_app_server/email_server.php?callback=response',
+                 // data to be added to query string:
+                 url: 'http://79.170.40.236/development-motoauto-hn.com/mobile-app/webservice.php?callback=response',
+                 data: { latitude: $("#latitude").val(), longitude: $("#longitude").val(), clientname: $("#clientname").val()},
+                 // type of data we are expecting in return:
+                 dataType: 'jsonp',
+                 timeout: 300,
+                 context: $('body'),
+                 success: function(data){
+
+                   if (data.success == true) {
+                     //$(page).find("#message").html("Your email was sent successfully!").show();
+                     alert($("#latitude").val());
+                   } else {
+                     //$(page).find("#message").html("Your email could not be sent - please try again later.").show();
+                     alert("False");
+                   }
+
+                 },
+                 error: function(xhr, type){
+
+                   $(page).find("#message").html("Your coordinates could not be sent - please try again later.").show();
+
+                 }
+
+               })
+
+
+           }); ///// end of onClick
+
+
+         }); ///////////end of page-1
+
+   try {
+     App.restore();
+   } catch (err) {
+     App.load('page-1');
+   }
+ </script>
+
+
+
+
+</body>
+
+</html>
